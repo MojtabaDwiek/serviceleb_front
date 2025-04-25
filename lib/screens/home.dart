@@ -25,55 +25,55 @@ class _LebaneseHomePageState extends State<LebaneseHomePage> {
       'gradient': [const Color(0xFFEE161F), const Color(0xFFD91018)],
     },
     {
-      'id': 3,
+      'id': 2,
       'title': 'سبّاك',
       'icon': Icons.plumbing,
       'gradient': [const Color(0xFF00A651), const Color(0xFF008B45)],
     },
     {
-      'id': 4,
+      'id': 3,
       'title': 'بلّاط',
       'icon': Icons.square_foot,
       'gradient': [const Color(0xFF00A651), const Color(0xFF008B45)],
     },
     {
-      'id': 5,
+      'id': 4,
       'title': 'نجّار',
       'icon': Icons.mood,
       'gradient': [const Color(0xFFEE161F), const Color(0xFFD91018)],
     },
     {
-      'id': 6,
+      'id': 5,
       'title': 'حدّاد',
       'icon': Icons.hardware,
       'gradient': [const Color(0xFFEE161F), const Color(0xFFD91018)],
     },
     {
-      'id': 7,
+      'id': 6,
       'title': 'فني ألمنيوم',
       'icon': Icons.window,
       'gradient': [const Color(0xFF00A651), const Color(0xFF008B45)],
     },
     {
-      'id': 8,
+      'id': 7,
       'title': 'فني تكييف',
       'icon': Icons.ac_unit,
       'gradient': [const Color(0xFF00A651), const Color(0xFF008B45)],
     },
     {
-      'id': 9,
+      'id': 8,
       'title': 'فني تبريد',
       'icon': Icons.kitchen,
       'gradient': [const Color(0xFFEE161F), const Color(0xFFD91018)],
     },
     {
-      'id': 10,
+      'id': 9,
       'title': 'ميكانيكي',
       'icon': Icons.car_repair,
       'gradient': [const Color(0xFF00A651), const Color(0xFF008B45)],
     },
     {
-      'id': 11,
+      'id': 10,
       'title': 'فني إنترنت',
       'icon': Icons.wifi,
       'gradient': [const Color(0xFFEE161F), const Color(0xFFD91018)],
@@ -166,9 +166,9 @@ class _LebaneseHomePageState extends State<LebaneseHomePage> {
                   background: Container(
                     decoration: BoxDecoration(
                       gradient: LinearGradient(
-                        colors: [const Color(0xFFC62828), const Color.fromARGB(255, 255, 255, 255)],
-                        begin: Alignment.topCenter,
-                        end: Alignment.bottomCenter,
+                        colors: [Color(0xFFEE161F), Colors.white, Color(0xFFEE161F)],
+                        begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
                       ),
                     ),
                     child: Center(
