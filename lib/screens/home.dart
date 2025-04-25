@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:serviceleb/apiservice.dart';
+
+import 'package:serviceleb/screens/location.dart';
 
 class LebaneseHomePage extends StatefulWidget {
   const LebaneseHomePage({super.key, required this.title});
@@ -11,30 +14,68 @@ class LebaneseHomePage extends StatefulWidget {
 
 class _LebaneseHomePageState extends State<LebaneseHomePage> {
   final ScrollController _scrollController = ScrollController();
+  bool _isLoading = false;
 
-  final List<Map<String, dynamic>> _services = [
+  // Hardcoded services with matching backend IDs
+ final List<Map<String, dynamic>> _services = [
     {
-      'id': 'ac_maintenance',
-      'title': 'صيانة مكيفات',
-      'icon': Icons.ac_unit,
+      'id': 1,
+      'title': 'كهربجي',
+      'icon': Icons.electrical_services,
       'gradient': [const Color(0xFFEE161F), const Color(0xFFD91018)],
     },
     {
-      'id': 'home_services',
-      'title': 'خدمات منزلية',
-      'icon': Icons.home,
+      'id': 3,
+      'title': 'سبّاك',
+      'icon': Icons.plumbing,
       'gradient': [const Color(0xFF00A651), const Color(0xFF008B45)],
     },
     {
-      'id': 'clearance',
-      'title': 'تخليص',
-      'icon': Icons.assignment_turned_in,
+      'id': 4,
+      'title': 'بلّاط',
+      'icon': Icons.square_foot,
       'gradient': [const Color(0xFF00A651), const Color(0xFF008B45)],
     },
     {
-      'id': 'delivery',
-      'title': 'توصيل طلبات',
-      'icon': Icons.delivery_dining,
+      'id': 5,
+      'title': 'نجّار',
+      'icon': Icons.mood,
+      'gradient': [const Color(0xFFEE161F), const Color(0xFFD91018)],
+    },
+    {
+      'id': 6,
+      'title': 'حدّاد',
+      'icon': Icons.hardware,
+      'gradient': [const Color(0xFFEE161F), const Color(0xFFD91018)],
+    },
+    {
+      'id': 7,
+      'title': 'فني ألمنيوم',
+      'icon': Icons.window,
+      'gradient': [const Color(0xFF00A651), const Color(0xFF008B45)],
+    },
+    {
+      'id': 8,
+      'title': 'فني تكييف',
+      'icon': Icons.ac_unit,
+      'gradient': [const Color(0xFF00A651), const Color(0xFF008B45)],
+    },
+    {
+      'id': 9,
+      'title': 'فني تبريد',
+      'icon': Icons.kitchen,
+      'gradient': [const Color(0xFFEE161F), const Color(0xFFD91018)],
+    },
+    {
+      'id': 10,
+      'title': 'ميكانيكي',
+      'icon': Icons.car_repair,
+      'gradient': [const Color(0xFF00A651), const Color(0xFF008B45)],
+    },
+    {
+      'id': 11,
+      'title': 'فني إنترنت',
+      'icon': Icons.wifi,
       'gradient': [const Color(0xFFEE161F), const Color(0xFFD91018)],
     },
   ];
@@ -53,6 +94,58 @@ class _LebaneseHomePageState extends State<LebaneseHomePage> {
     super.dispose();
   }
 
+ Future<void> _navigateToLocations(BuildContext context, int serviceId) async {
+  debugPrint('Starting navigation to locations for service $serviceId');
+  
+  setState(() => _isLoading = true);
+  try {
+    debugPrint('Calling API for locations...');
+    final locations = await ApiService.getLocations(serviceId);
+    debugPrint('Received ${locations.length} locations');
+
+    if (!mounted) {
+      debugPrint('Widget disposed before navigation');
+      return;
+    }
+
+    debugPrint('Finding service details...');
+    final service = _services.firstWhere((s) => s['id'] == serviceId);
+    debugPrint('Service found: ${service['title']}');
+
+    debugPrint('Navigating to LocationsScreen');
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => LocationsScreen(
+          serviceId: serviceId,
+          serviceTitle: service['title'],
+          locations: locations,
+        ),
+      ),
+    );
+    debugPrint('Navigation complete');
+
+  } catch (e) {
+    debugPrint('Error occurred: $e');
+    debugPrint('Error type: ${e.runtimeType}');
+    if (e is Error) {
+      debugPrint('Stack trace: ${e.stackTrace}');
+    }
+    
+    if (mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error: ${e.toString()}')),
+      );
+    }
+  } finally {
+    debugPrint('Cleaning up...');
+    if (mounted) {
+      setState(() => _isLoading = false);
+    }
+    debugPrint('Done');
+  }
+}
+
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
@@ -60,101 +153,112 @@ class _LebaneseHomePageState extends State<LebaneseHomePage> {
 
     return Scaffold(
       backgroundColor: Colors.white,
-      body: CustomScrollView(
-        controller: _scrollController,
-        slivers: [
-          SliverAppBar(
-            expandedHeight: size.height * 0.3,
-            pinned: true,
-            flexibleSpace: FlexibleSpaceBar(
-              collapseMode: CollapseMode.parallax,
-              background: Container(
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    colors: [const Color(0xFFC62828), const Color.fromARGB(255, 255, 255, 255)],
-                    begin: Alignment.topCenter,
-                    end: Alignment.bottomCenter,
+      body: Stack(
+        children: [
+          CustomScrollView(
+            controller: _scrollController,
+            slivers: [
+              SliverAppBar(
+                expandedHeight: size.height * 0.3,
+                pinned: true,
+                flexibleSpace: FlexibleSpaceBar(
+                  collapseMode: CollapseMode.parallax,
+                  background: Container(
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        colors: [const Color(0xFFC62828), const Color.fromARGB(255, 255, 255, 255)],
+                        begin: Alignment.topCenter,
+                        end: Alignment.bottomCenter,
+                      ),
+                    ),
+                    child: Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Container(
+                            padding: const EdgeInsets.all(16),
+                            decoration: BoxDecoration(
+                              color: Colors.white.withOpacity(0.2),
+                              shape: BoxShape.circle,
+                              border: Border.all(
+                                color: Colors.green.withOpacity(0.7),
+                                width: 2,
+                              ),
+                            ),
+                            child: Icon(
+                              Icons.park,
+                              size: 60,
+                              color: Colors.green,
+                            ),
+                          ),
+                          const SizedBox(height: 16),
+                          Text(
+                            'Service Leb ',
+                            style: theme.textTheme.headlineSmall?.copyWith(
+                              color: Colors.green[20],
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
                   ),
                 ),
-                child: Center(
+              ),
+              SliverPadding(
+                padding: const EdgeInsets.fromLTRB(16, 24, 16, 16),
+                sliver: SliverToBoxAdapter(
                   child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                      Container(
-                        padding: const EdgeInsets.all(16),
-                        decoration: BoxDecoration(
-                          color: Colors.white.withOpacity(0.2),
-                          shape: BoxShape.circle,
-                          border: Border.all(
-                            color: Colors.green.withOpacity(0.7),
-                            width: 2,
-                          ),
-                        ),
-                        child: Icon(
-                          Icons.park,
-                          size: 60,
-                          color: Colors.green,
-                        ),
-                      ),
-                      const SizedBox(height: 16),
                       Text(
-                        'Service Leb ',
-                        style: theme.textTheme.headlineSmall?.copyWith(
-                          color: Colors.green[20],
+                        'الخدمات المتاحة',
+                        style: theme.textTheme.titleLarge?.copyWith(
                           fontWeight: FontWeight.bold,
+                          color: Colors.grey[800],
                         ),
+                        textAlign: TextAlign.center,
                       ),
+                      const SizedBox(height: 8),
+                      Text(
+                        'اختر الخدمة التي تحتاجها',
+                        style: theme.textTheme.bodyMedium?.copyWith(
+                          color: Colors.grey[600],
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                      const SizedBox(height: 24),
                     ],
                   ),
                 ),
               ),
-            ),
-          ),
-          SliverPadding(
-  padding: const EdgeInsets.fromLTRB(16, 24, 16, 16),
-  sliver: SliverToBoxAdapter(
-    child: Column(
-      crossAxisAlignment: CrossAxisAlignment.center, // Changed from start to center
-      children: [
-        Text(
-          'الخدمات المتاحة',
-          style: theme.textTheme.titleLarge?.copyWith(
-            fontWeight: FontWeight.bold,
-            color: Colors.grey[800],
-          ),
-          textAlign: TextAlign.center, // Added textAlign
-        ),
-        const SizedBox(height: 8),
-        Text(
-          'اختر الخدمة التي تحتاجها',
-          style: theme.textTheme.bodyMedium?.copyWith(
-            color: Colors.grey[600],
-          ),
-          textAlign: TextAlign.center, // Added textAlign
-        ),
-        const SizedBox(height: 24),
-      ],
-    ),
-  ),
-),
-          SliverPadding(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
-            sliver: SliverGrid(
-              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-  crossAxisCount: 2,
-  mainAxisSpacing: 8, 
-  crossAxisSpacing: 8, 
-  childAspectRatio: 1.2, 
-),
-              delegate: SliverChildBuilderDelegate(
-                (context, index) {
-                  return _ServiceCard(service: _services[index]);
-                },
-                childCount: _services.length,
+              SliverPadding(
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                sliver: SliverGrid(
+                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 2,
+                    mainAxisSpacing: 8,
+                    crossAxisSpacing: 8,
+                    childAspectRatio: 1.2,
+                  ),
+                  delegate: SliverChildBuilderDelegate(
+                    (context, index) {
+                      return _ServiceCard(
+                        service: _services[index],
+                        onTap: () => _navigateToLocations(context, _services[index]['id']),
+                      );
+                    },
+                    childCount: _services.length,
+                  ),
+                ),
               ),
-            ),
+              const SliverPadding(padding: EdgeInsets.only(bottom: 24)),
+            ],
           ),
-          const SliverPadding(padding: EdgeInsets.only(bottom: 24)),
+          if (_isLoading)
+            const Center(
+              child: CircularProgressIndicator(),
+            ),
         ],
       ),
     );
@@ -163,17 +267,18 @@ class _LebaneseHomePageState extends State<LebaneseHomePage> {
 
 class _ServiceCard extends StatelessWidget {
   final Map<String, dynamic> service;
+  final VoidCallback onTap;
 
-  const _ServiceCard({required this.service});
+  const _ServiceCard({required this.service, required this.onTap});
 
   @override
   Widget build(BuildContext context) {
     return Material(
-      borderRadius: BorderRadius.circular(16), // Slightly smaller radius
-      elevation: 3, // Slightly less elevation
+      borderRadius: BorderRadius.circular(16),
+      elevation: 3,
       child: InkWell(
         borderRadius: BorderRadius.circular(16),
-        onTap: () {},
+        onTap: onTap,
         child: Container(
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(16),
@@ -185,35 +290,35 @@ class _ServiceCard extends StatelessWidget {
             boxShadow: [
               BoxShadow(
                 color: Colors.black.withOpacity(0.1),
-                blurRadius: 8, // Smaller shadow
+                blurRadius: 8,
                 offset: const Offset(0, 3),
               ),
             ],
           ),
           child: Padding(
-            padding: const EdgeInsets.all(16), // Reduced padding
+            padding: const EdgeInsets.all(16),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Container(
-                  padding: const EdgeInsets.all(12), // Smaller padding
+                  padding: const EdgeInsets.all(12),
                   decoration: BoxDecoration(
                     color: Colors.white.withOpacity(0.2),
                     shape: BoxShape.circle,
                   ),
                   child: Icon(
                     service['icon'],
-                    size: 24, // Smaller icon
+                    size: 24,
                     color: Colors.white,
                   ),
                 ),
-                const SizedBox(height: 12), // Reduced spacing
+                const SizedBox(height: 12),
                 Text(
                   service['title'],
                   textAlign: TextAlign.center,
                   style: const TextStyle(
                     color: Colors.white,
-                    fontSize: 16, // Smaller font
+                    fontSize: 16,
                     fontWeight: FontWeight.bold,
                     height: 1.2,
                   ),
