@@ -1,6 +1,8 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:url_launcher/url_launcher.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 class TechniciansScreen extends StatelessWidget {
   final int serviceId;
@@ -8,7 +10,7 @@ class TechniciansScreen extends StatelessWidget {
   final String serviceTitle;
   final String locationName;
 
-  const TechniciansScreen({
+  const TechniciansScreen({super.key, 
     required this.serviceId,
     required this.locationId,
     required this.serviceTitle,
@@ -144,20 +146,25 @@ class TechniciansScreen extends StatelessWidget {
                                   color: Colors.white70,
                                 ),
                               ),
-                              trailing: Container(
-                                padding: const EdgeInsets.all(8),
-                                decoration: BoxDecoration(
-                                  color: Colors.white.withOpacity(0.2),
-                                  shape: BoxShape.circle,
-                                ),
-                                child: const Icon(
-                                  Icons.phone,
-                                  color: Colors.white,
-                                ),
+                              trailing: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  if (tech['phone'] != null)
+                                    IconButton(
+                                      icon: const FaIcon(
+                                        FontAwesomeIcons.whatsapp,
+                                        color: Colors.white,
+                                        size: 24,
+                                      ),
+                                      onPressed: () => _launchWhatsApp(tech['phone']),
+                                    ),
+                                  const SizedBox(width: 8),
+                                  IconButton(
+                                    icon: const Icon(Icons.phone, color: Colors.white),
+                                    onPressed: () => _makePhoneCall(tech['phone']),
+                                  ),
+                                ],
                               ),
-                              onTap: () {
-                                // Implement phone call functionality
-                              },
                             ),
                           );
                         },
@@ -171,6 +178,38 @@ class TechniciansScreen extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  Future<void> _launchWhatsApp(String phone) async {
+    // Remove any non-digit characters and add Lebanon country code
+    String formattedPhone = phone.replaceAll(RegExp(r'[^0-9]'), '');
+    if (formattedPhone.startsWith('0')) {
+      formattedPhone = formattedPhone.substring(1);
+    }
+    formattedPhone = '+961$formattedPhone';
+    
+    final url = 'https://wa.me/$formattedPhone';
+    if (await canLaunch(url)) {
+      await launch(url);
+    } else {
+      throw 'Could not launch $url';
+    }
+  }
+
+  Future<void> _makePhoneCall(String phone) async {
+    // Remove any non-digit characters and add Lebanon country code
+    String formattedPhone = phone.replaceAll(RegExp(r'[^0-9]'), '');
+    if (formattedPhone.startsWith('0')) {
+      formattedPhone = formattedPhone.substring(1);
+    }
+    formattedPhone = '+961$formattedPhone';
+    
+    final url = 'tel:$formattedPhone';
+    if (await canLaunch(url)) {
+      await launch(url);
+    } else {
+      throw 'Could not launch $url';
+    }
   }
 
   Future<List<dynamic>> _fetchTechnicians() async {
