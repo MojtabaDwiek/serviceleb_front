@@ -5,11 +5,13 @@ class LocationsScreen extends StatefulWidget {
   final int serviceId;
   final String serviceTitle;
   final List<dynamic> locations;
+  final IconData serviceIcon;
 
   const LocationsScreen({
     required this.serviceId,
     required this.serviceTitle,
     required this.locations,
+    required this.serviceIcon,
     Key? key,
   }) : super(key: key);
 
@@ -53,77 +55,111 @@ class _LocationsScreenState extends State<LocationsScreen> {
         child: SafeArea(
           child: Column(
             children: [
-              // Header with title and search
+              // Header with title and back button
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+                child: Row(
+                  children: [
+                    IconButton(
+                      icon: const Icon(Icons.arrow_back, color: Colors.white),
+                      onPressed: () => Navigator.pop(context),
+                    ),
+                    const SizedBox(width: 16),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Hero(
+                            tag: 'service-title-${widget.serviceId}',
+                            child: Material(
+                              type: MaterialType.transparency,
+                              child: Text(
+                                widget.serviceTitle,
+                                style: const TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    Hero(
+                      tag: 'service-icon-${widget.serviceId}',
+                      child: Container(
+                        padding: const EdgeInsets.all(8),
+                        decoration: BoxDecoration(
+                          color: Colors.white.withOpacity(0.2),
+                          shape: BoxShape.circle,
+                        ),
+                        child: Icon(
+                          widget.serviceIcon,
+                          size: 24,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              // Search bar
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      children: [
-                        Expanded(
-                          child: AnimatedSwitcher(
-                            duration: const Duration(milliseconds: 300),
-                            child: _isSearching
-                                ? TextField(
-                                    controller: _searchController,
-                                    autofocus: true,
-                                    style: const TextStyle(color: Colors.white),
-                                    decoration: InputDecoration(
-                                      hintText: 'Search locations...',
-                                      hintStyle: TextStyle(color: Colors.white70),
-                                      border: InputBorder.none,
-                                      suffixIcon: IconButton(
-                                        icon: const Icon(Icons.close, color: Colors.white),
-                                        onPressed: () {
-                                          setState(() {
-                                            _isSearching = false;
-                                            _searchController.clear();
-                                            _filteredLocations = widget.locations;
-                                          });
-                                        },
-                                      ),
-                                    ),
-                                    onChanged: (value) {
-                                      setState(() {
-                                        _filteredLocations = widget.locations
-                                            .where((location) => location['name']
-                                                .toLowerCase()
-                                                .contains(value.toLowerCase()))
-                                            .toList();
-                                      });
-                                    },
-                                  )
-                                : Text(
-                                    'Choose your location',
-                                    style: TextStyle(
-                                      color: Colors.white,
-                                      fontSize: 24,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
+                child: AnimatedSwitcher(
+                  duration: const Duration(milliseconds: 300),
+                  child: _isSearching
+                      ? TextField(
+                          controller: _searchController,
+                          autofocus: true,
+                          style: const TextStyle(color: Colors.white),
+                          decoration: InputDecoration(
+                            hintText: 'Search locations...',
+                            hintStyle: TextStyle(color: Colors.white70),
+                            border: InputBorder.none,
+                            suffixIcon: IconButton(
+                              icon: const Icon(Icons.close, color: Colors.white),
+                              onPressed: () {
+                                setState(() {
+                                  _isSearching = false;
+                                  _searchController.clear();
+                                  _filteredLocations = widget.locations;
+                                });
+                              },
+                            ),
                           ),
-                        ),
-                        IconButton(
-                          icon: Icon(
-                            _isSearching ? Icons.search : Icons.search,
-                            color: Colors.white,
-                          ),
-                          onPressed: () {
+                          onChanged: (value) {
                             setState(() {
-                              _isSearching = !_isSearching;
-                              if (!_isSearching) {
-                                _searchController.clear();
-                                _filteredLocations = widget.locations;
-                              }
+                              _filteredLocations = widget.locations
+                                  .where((location) => location['name']
+                                      .toLowerCase()
+                                      .contains(value.toLowerCase()))
+                                  .toList();
                             });
                           },
+                        )
+                      : Row(
+                          children: [
+                            Expanded(
+                              child: Text(
+                                'Choose your location',
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 18,
+                                ),
+                              ),
+                            ),
+                            IconButton(
+                              icon: const Icon(Icons.search, color: Colors.white),
+                              onPressed: () {
+                                setState(() {
+                                  _isSearching = true;
+                                });
+                              },
+                            ),
+                          ],
                         ),
-                      ],
-                    ),
-                    const SizedBox(height: 8),
-                    
-                  ],
                 ),
               ),
               const SizedBox(height: 16),
@@ -136,7 +172,7 @@ class _LocationsScreenState extends State<LocationsScreen> {
                       crossAxisCount: 3,
                       crossAxisSpacing: 16,
                       mainAxisSpacing: 16,
-                      childAspectRatio: 0.8, // Adjusted for text
+                      childAspectRatio: 0.8,
                     ),
                     itemCount: _filteredLocations.length,
                     itemBuilder: (context, index) {
@@ -146,23 +182,29 @@ class _LocationsScreenState extends State<LocationsScreen> {
                           Navigator.push(
                             context,
                             PageRouteBuilder(
-                              pageBuilder: (context, animation, secondaryAnimation) =>
-                                  TechniciansScreen(
-                                serviceId: widget.serviceId,
-                                locationId: location['id'],
-                                serviceTitle: widget.serviceTitle,
-                                locationName: location['name'],
-                              ),
-                              transitionsBuilder:
-                                  (context, animation, secondaryAnimation, child) {
+                              transitionDuration: const Duration(milliseconds: 500),
+                              pageBuilder: (context, animation, secondaryAnimation) {
+                                return TechniciansScreen(
+                                  serviceId: widget.serviceId,
+                                  locationId: location['id'],
+                                  serviceTitle: widget.serviceTitle,
+                                  locationName: location['name'],
+                                );
+                              },
+                              transitionsBuilder: (context, animation, secondaryAnimation, child) {
                                 const begin = Offset(0.0, 1.0);
                                 const end = Offset.zero;
-                                const curve = Curves.ease;
-                                final tween = Tween(begin: begin, end: end)
-                                    .chain(CurveTween(curve: curve));
+                                const curve = Curves.easeInOutQuart;
+                                
+                                var tween = Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
+                                var offsetAnimation = animation.drive(tween);
+
                                 return SlideTransition(
-                                  position: animation.drive(tween),
-                                  child: child,
+                                  position: offsetAnimation,
+                                  child: FadeTransition(
+                                    opacity: animation,
+                                    child: child,
+                                  ),
                                 );
                               },
                             ),

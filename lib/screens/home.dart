@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:serviceleb/apiservice.dart';
-
+import 'package:serviceleb/custom_route.dart';
 import 'package:serviceleb/screens/location.dart';
 
 class LebaneseHomePage extends StatefulWidget {
@@ -16,8 +16,7 @@ class _LebaneseHomePageState extends State<LebaneseHomePage> {
   final ScrollController _scrollController = ScrollController();
   bool _isLoading = false;
 
-  // Hardcoded services with matching backend IDs
- final List<Map<String, dynamic>> _services = [
+  final List<Map<String, dynamic>> _services = [
     {
       'id': 1,
       'title': 'كهربجي',
@@ -94,55 +93,37 @@ class _LebaneseHomePageState extends State<LebaneseHomePage> {
     super.dispose();
   }
 
- Future<void> _navigateToLocations(BuildContext context, int serviceId) async {
-  debugPrint('Starting navigation to locations for service $serviceId');
-  
+  Future<void> _navigateToLocations(BuildContext context, int serviceId) async {
   setState(() => _isLoading = true);
   try {
-    debugPrint('Calling API for locations...');
     final locations = await ApiService.getLocations(serviceId);
-    debugPrint('Received ${locations.length} locations');
+    if (!mounted) return;
 
-    if (!mounted) {
-      debugPrint('Widget disposed before navigation');
-      return;
-    }
-
-    debugPrint('Finding service details...');
     final service = _services.firstWhere((s) => s['id'] == serviceId);
-    debugPrint('Service found: ${service['title']}');
 
-    debugPrint('Navigating to LocationsScreen');
     Navigator.push(
       context,
-      MaterialPageRoute(
-        builder: (context) => LocationsScreen(
+      ExplodingRoute(
+        page: LocationsScreen(
           serviceId: serviceId,
           serviceTitle: service['title'],
           locations: locations,
+          serviceIcon: service['icon'],
         ),
+        primaryColor: service['gradient'][0],
+        secondaryColor: service['gradient'][1],
       ),
     );
-    debugPrint('Navigation complete');
-
   } catch (e) {
-    debugPrint('Error occurred: $e');
-    debugPrint('Error type: ${e.runtimeType}');
-    if (e is Error) {
-      debugPrint('Stack trace: ${e.stackTrace}');
-    }
-    
     if (mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Error: ${e.toString()}')),
       );
     }
   } finally {
-    debugPrint('Cleaning up...');
     if (mounted) {
       setState(() => _isLoading = false);
     }
-    debugPrint('Done');
   }
 }
 
@@ -168,7 +149,7 @@ class _LebaneseHomePageState extends State<LebaneseHomePage> {
                       gradient: LinearGradient(
                         colors: [Color(0xFFEE161F), Colors.white, Color(0xFFEE161F)],
                         begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
+                        end: Alignment.bottomRight,
                       ),
                     ),
                     child: Center(
@@ -300,27 +281,36 @@ class _ServiceCard extends StatelessWidget {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Container(
-                  padding: const EdgeInsets.all(12),
-                  decoration: BoxDecoration(
-                    color: Colors.white.withOpacity(0.2),
-                    shape: BoxShape.circle,
-                  ),
-                  child: Icon(
-                    service['icon'],
-                    size: 24,
-                    color: Colors.white,
+                Hero(
+                  tag: 'service-icon-${service['id']}',
+                  child: Container(
+                    padding: const EdgeInsets.all(12),
+                    decoration: BoxDecoration(
+                      color: Colors.white.withOpacity(0.2),
+                      shape: BoxShape.circle,
+                    ),
+                    child: Icon(
+                      service['icon'],
+                      size: 24,
+                      color: Colors.white,
+                    ),
                   ),
                 ),
                 const SizedBox(height: 12),
-                Text(
-                  service['title'],
-                  textAlign: TextAlign.center,
-                  style: const TextStyle(
-                    color: Colors.white,
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                    height: 1.2,
+                Hero(
+                  tag: 'service-title-${service['id']}',
+                  child: Material(
+                    type: MaterialType.transparency,
+                    child: Text(
+                      service['title'],
+                      textAlign: TextAlign.center,
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                        height: 1.2,
+                      ),
+                    ),
                   ),
                 ),
               ],

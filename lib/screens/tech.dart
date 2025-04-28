@@ -10,12 +10,13 @@ class TechniciansScreen extends StatelessWidget {
   final String serviceTitle;
   final String locationName;
 
-  const TechniciansScreen({super.key, 
+  const TechniciansScreen({
     required this.serviceId,
     required this.locationId,
     required this.serviceTitle,
     required this.locationName,
-  });
+    Key? key,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -140,12 +141,7 @@ class TechniciansScreen extends StatelessWidget {
                                   fontWeight: FontWeight.bold,
                                 ),
                               ),
-                              subtitle: Text(
-                                tech['phone'] ?? 'No phone provided',
-                                style: const TextStyle(
-                                  color: Colors.white70,
-                                ),
-                              ),
+                              
                               trailing: Row(
                                 mainAxisSize: MainAxisSize.min,
                                 children: [
@@ -181,7 +177,6 @@ class TechniciansScreen extends StatelessWidget {
   }
 
   Future<void> _launchWhatsApp(String phone) async {
-    // Remove any non-digit characters and add Lebanon country code
     String formattedPhone = phone.replaceAll(RegExp(r'[^0-9]'), '');
     if (formattedPhone.startsWith('0')) {
       formattedPhone = formattedPhone.substring(1);
@@ -197,7 +192,6 @@ class TechniciansScreen extends StatelessWidget {
   }
 
   Future<void> _makePhoneCall(String phone) async {
-    // Remove any non-digit characters and add Lebanon country code
     String formattedPhone = phone.replaceAll(RegExp(r'[^0-9]'), '');
     if (formattedPhone.startsWith('0')) {
       formattedPhone = formattedPhone.substring(1);
