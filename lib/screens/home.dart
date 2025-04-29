@@ -121,7 +121,6 @@ class _LebaneseHomePageState extends State<LebaneseHomePage>
   Future<void> _navigateToLocations(BuildContext context, int serviceId) async {
     final service = _services.firstWhere((s) => s['id'] == serviceId);
     
-    // Pre-cache the next screen's data
     final locationsFuture = ApiService.getLocations(serviceId);
     
     Navigator.push(
@@ -141,12 +140,11 @@ class _LebaneseHomePageState extends State<LebaneseHomePage>
                   serviceIcon: service['icon'],
                 );
               }
-              // Seamless transition with placeholder content
               return Scaffold(
                 backgroundColor: service['color'],
                 body: Center(
                   child: CircularProgressIndicator(
-                    color: Colors.white.withOpacity(0.8),
+                    color: Colors.white.withAlpha((0.8 * 255).toInt()),
                   ),
                 ),
               );
@@ -235,7 +233,7 @@ class _LebaneseHomePageState extends State<LebaneseHomePage>
                             height: 200,
                             decoration: BoxDecoration(
                               shape: BoxShape.circle,
-                              color: Colors.white.withOpacity(0.1),
+                              color: Colors.white.withAlpha((0.1 * 255).toInt()),
                             ),
                           ),
                         ),
@@ -247,7 +245,7 @@ class _LebaneseHomePageState extends State<LebaneseHomePage>
                             height: 150,
                             decoration: BoxDecoration(
                               shape: BoxShape.circle,
-                              color: Colors.white.withOpacity(0.05),
+                              color: Colors.white.withAlpha((0.05 * 255).toInt()),
                             ),
                           ),
                         ),
@@ -258,10 +256,10 @@ class _LebaneseHomePageState extends State<LebaneseHomePage>
                               Container(
                                 padding: const EdgeInsets.all(20),
                                 decoration: BoxDecoration(
-                                  color: Colors.white.withOpacity(0.2),
+                                  color: Colors.white.withAlpha((0.2 * 255).toInt()),
                                   shape: BoxShape.circle,
                                   border: Border.all(
-                                    color: Colors.white.withOpacity(0.3),
+                                    color: Colors.white.withAlpha((0.3 * 255).toInt()),
                                     width: 2,
                                   ),
                                 ),
@@ -286,7 +284,7 @@ class _LebaneseHomePageState extends State<LebaneseHomePage>
                                   'Find trusted professionals for all your home needs',
                                   textAlign: TextAlign.center,
                                   style: theme.textTheme.bodyMedium?.copyWith(
-                                    color: Colors.white.withOpacity(0.9),
+                                    color: Colors.white.withAlpha((0.9 * 255).toInt()),
                                   ),
                                 ),
                               ),
@@ -307,30 +305,29 @@ class _LebaneseHomePageState extends State<LebaneseHomePage>
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                  Center(
-  child: Column(
-    mainAxisSize: MainAxisSize.min,
-    crossAxisAlignment: CrossAxisAlignment.center,
-    children: [
-      Text(
-        'الخدمات المتاحة',
-        style: theme.textTheme.headlineSmall?.copyWith(
-          fontWeight: FontWeight.bold,
-          color: Colors.grey[900],
-        ),
-        textAlign: TextAlign.center,
-      ),
-      const SizedBox(height: 8),
-      Text(
-        'اختر الخدمة التي تحتاجها',
-        style: theme.textTheme.bodyMedium?.copyWith(
-          color: Colors.grey[600],
-        ),
-        textAlign: TextAlign.center,
-      ),
-    ],
-  ),
-)
-
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Text(
+                          'الخدمات المتاحة',
+                          style: theme.textTheme.headlineSmall?.copyWith(
+                            fontWeight: FontWeight.bold,
+                            color: Colors.grey[900],
+                          ),
+                          textAlign: TextAlign.center,
+                        ),
+                        const SizedBox(height: 8),
+                        Text(
+                          'اختر الخدمة التي تحتاجها',
+                          style: theme.textTheme.bodyMedium?.copyWith(
+                            color: Colors.grey[600],
+                          ),
+                          textAlign: TextAlign.center,
+                        ),
+                      ],
+                    ),
+                  )
                 ],
               ),
             ),
@@ -372,8 +369,8 @@ class AnimatedServiceCard extends StatefulWidget {
     required this.service,
     required this.delay,
     required this.onTap,
-    Key? key,
-  }) : super(key: key);
+    super.key,
+  });
 
   @override
   State<AnimatedServiceCard> createState() => _AnimatedServiceCardState();
@@ -454,8 +451,7 @@ class _ServiceCard extends StatelessWidget {
   const _ServiceCard({
     required this.service,
     required this.onTap,
-    Key? key,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -472,7 +468,7 @@ class _ServiceCard extends StatelessWidget {
             borderRadius: BorderRadius.circular(16),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withOpacity(0.1),
+                color: Colors.black.withAlpha((0.1 * 255).toInt()),
                 blurRadius: 6,
                 offset: const Offset(0, 3),
               ),
@@ -488,7 +484,7 @@ class _ServiceCard extends StatelessWidget {
                   height: 80,
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
-                    color: Colors.white.withOpacity(0.15),
+                    color: Colors.white.withAlpha((0.15 * 255).toInt()),
                   ),
                 ),
               ),
@@ -502,7 +498,7 @@ class _ServiceCard extends StatelessWidget {
                       child: Container(
                         padding: const EdgeInsets.all(12),
                         decoration: BoxDecoration(
-                          color: Colors.white.withOpacity(0.2),
+                          color: Colors.white.withAlpha((0.2 * 255).toInt()),
                           shape: BoxShape.circle,
                         ),
                         child: Icon(

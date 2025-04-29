@@ -91,7 +91,7 @@ class _LocationsScreenState extends State<LocationsScreen> {
                       child: Container(
                         padding: const EdgeInsets.all(8),
                         decoration: BoxDecoration(
-                          color: Colors.white.withOpacity(0.2),
+                          color: Colors.white.withAlpha(51), // 0.2 * 255 ≈ 51
                           shape: BoxShape.circle,
                         ),
                         child: Icon(
@@ -116,7 +116,7 @@ class _LocationsScreenState extends State<LocationsScreen> {
                           style: const TextStyle(color: Colors.white),
                           decoration: InputDecoration(
                             hintText: 'Search locations...',
-                            hintStyle: TextStyle(color: Colors.white70),
+                            hintStyle: TextStyle(color: Colors.white.withAlpha(178)), // 0.7 * 255 ≈ 178
                             border: InputBorder.none,
                             suffixIcon: IconButton(
                               icon: const Icon(Icons.close, color: Colors.white),
@@ -212,10 +212,10 @@ class _LocationsScreenState extends State<LocationsScreen> {
                         },
                         child: Container(
                           decoration: BoxDecoration(
-                            color: Colors.white.withOpacity(0.2),
+                            color: Colors.white.withAlpha(51), // 0.2 * 255 ≈ 51
                             borderRadius: BorderRadius.circular(20),
                             border: Border.all(
-                              color: Colors.white.withOpacity(0.4),
+                              color: Colors.white.withAlpha(102), // 0.4 * 255 ≈ 102
                               width: 1,
                             ),
                           ),

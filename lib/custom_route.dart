@@ -33,9 +33,9 @@ class ExplodingRoute extends PageRouteBuilder {
                           gradient: RadialGradient(
                             center: Alignment.center,
                             colors: [
-                              primaryColor.withOpacity(value * 0.8),
-                              secondaryColor.withOpacity(value * 0.5),
-                              Colors.white.withOpacity(value * 0.3),
+                              primaryColor.withAlpha((value * 0.8 * 255).toInt()),
+                              secondaryColor.withAlpha((value * 0.5 * 255).toInt()),
+                              Colors.white.withAlpha((value * 0.3 * 255).toInt()),
                             ],
                             stops: const [0.0, 0.5, 1.0],
                             radius: value * 2.5,
@@ -113,7 +113,7 @@ class ExplodingRoute extends PageRouteBuilder {
                       color: color,
                       boxShadow: [
                         BoxShadow(
-                          color: color.withOpacity(opacity * 0.5),
+                          color: color.withAlpha((opacity * 0.5 * 255).toInt()),
                           blurRadius: 12,
                           spreadRadius: 2,
                         ),

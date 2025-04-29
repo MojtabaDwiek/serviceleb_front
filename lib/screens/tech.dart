@@ -15,8 +15,8 @@ class TechniciansScreen extends StatelessWidget {
     required this.locationId,
     required this.serviceTitle,
     required this.locationName,
-    Key? key,
-  }) : super(key: key);
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -57,8 +57,8 @@ class TechniciansScreen extends StatelessWidget {
                           ),
                           Text(
                             locationName,
-                            style: const TextStyle(
-                              color: Colors.white70,
+                            style: TextStyle(
+                              color: Colors.white.withAlpha(178), // 0.7 opacity
                               fontSize: 14,
                             ),
                           ),
@@ -69,12 +69,12 @@ class TechniciansScreen extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 8),
-              const Padding(
-                padding: EdgeInsets.symmetric(horizontal: 16),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16),
                 child: Text(
                   'Available Technicians',
                   style: TextStyle(
-                    color: Colors.white70,
+                    color: Colors.white.withAlpha(178), // 0.7 opacity
                     fontSize: 16,
                   ),
                 ),
@@ -116,7 +116,7 @@ class TechniciansScreen extends StatelessWidget {
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(12),
                             ),
-                            color: Colors.white.withOpacity(0.1),
+                            color: Colors.white.withAlpha(25), // 0.1 opacity
                             child: ListTile(
                               contentPadding: const EdgeInsets.symmetric(
                                 horizontal: 16,
@@ -126,7 +126,7 @@ class TechniciansScreen extends StatelessWidget {
                                 width: 40,
                                 height: 40,
                                 decoration: BoxDecoration(
-                                  color: Colors.white.withOpacity(0.2),
+                                  color: Colors.white.withAlpha(51), // 0.2 opacity
                                   shape: BoxShape.circle,
                                 ),
                                 child: const Icon(
@@ -183,9 +183,9 @@ class TechniciansScreen extends StatelessWidget {
     }
     formattedPhone = '+961$formattedPhone';
     
-    final url = 'https://wa.me/$formattedPhone';
-    if (await canLaunch(url)) {
-      await launch(url);
+    final Uri url = Uri.parse('https://wa.me/$formattedPhone');
+    if (await canLaunchUrl(url)) {
+      await launchUrl(url);
     } else {
       throw 'Could not launch $url';
     }
@@ -198,9 +198,9 @@ class TechniciansScreen extends StatelessWidget {
     }
     formattedPhone = '+961$formattedPhone';
     
-    final url = 'tel:$formattedPhone';
-    if (await canLaunch(url)) {
-      await launch(url);
+    final Uri url = Uri.parse('tel:$formattedPhone');
+    if (await canLaunchUrl(url)) {
+      await launchUrl(url);
     } else {
       throw 'Could not launch $url';
     }
